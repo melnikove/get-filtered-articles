@@ -18,8 +18,8 @@ const getEntitiesList = async function <T>(
   entityName: EListEntityName,
 ): Promise<IGetEntitiesListPromiseValue<T>> {
   const resp = await apiRequestGet(requestUrl);
-  if (!resp.ok) { 
-    throw new Error('getEntitiesList error!!!')
+  if (!resp.ok) {
+    throw new Error("getEntitiesList error!!!");
   }
   const result = await resp.json();
   return {
@@ -30,7 +30,7 @@ const getEntitiesList = async function <T>(
 
 const getArticlesListService = async (params: IGetArticlesReqParams) => {
   const { locale, categories } = params;
-  
+
   const url =
     API_ARTICLES_URL +
     "?search=1" +
@@ -49,8 +49,8 @@ const getCategoriesListService = async () => {
 
 const getInstanceService = async (): Promise<IGetInstancePromiseValue> => {
   const resp = await apiRequestGet(API_INSTANCE_URL);
-  if (!resp.ok) { 
-    throw new Error('getInstanceService error!!!')
+  if (!resp.ok) {
+    throw new Error("getInstanceService error!!!");
   }
   const result = await resp.json();
   return {

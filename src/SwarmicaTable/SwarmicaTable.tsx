@@ -1,8 +1,6 @@
 import React, { useCallback, useState } from "react";
 import { useRecoilState } from "recoil";
-import {
-  ArticleItem,
-} from "./type";
+import { ArticleItem } from "./type";
 import {
   articlesListAtom,
   categoriesListAtom,
