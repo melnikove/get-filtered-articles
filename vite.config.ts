@@ -7,11 +7,9 @@ export default defineConfig({
   server: {
     proxy: {
       "/api": {
-        target: "https://support.swarmica.com/api/",
+        target: "https://support.swarmica.com/",
         changeOrigin: true,
         secure: false,
-        ws: true,
-        rewrite: (path) => path.replace("/api/", ""),
       },
     },
   },
