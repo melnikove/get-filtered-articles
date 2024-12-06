@@ -1,28 +1,13 @@
 import React, { useCallback, useState } from 'react';
 import { useRecoilState } from "recoil";
-import { ArticleItem, IArticle, ICategory, IGetEntitiesListPromiseValue, IGetInstancePromiseValue } from "./type";
-import { articlesListAtom, categoriesListAtom, localesListAtom } from "./atoms";
+import { ArticleItem, EListEntityName, IArticle, ICategory, IGetEntitiesListPromiseValue, IGetInstancePromiseValue } from "./type";
+import { articlesListAtom, categoriesListAtom, localesListAtom } from "../atoms";
 import { useEffect } from "react";
 import { FormControl, InputLabel, MenuItem, Paper, Select, SelectChangeEvent, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
-import { markToLS } from './helper';
-
-const fetchEntitiesList = async function<T>(requestUrl: string, entityName: string): Promise<IGetEntitiesListPromiseValue<T>> {
-        const resp = await fetch(requestUrl);
-        const result = await resp.json();
-        return {
-            ...result,
-            entityName
-        };
-}
-
-const fetchInstance = async (): Promise<IGetInstancePromiseValue> => {
-        const resp = await fetch('/api/instance/');
-        const result = await resp.json();
-        return {
-            ...result,
-            entityName: 'Instance',
-        };
-}
+import { markToLS } from '../helpers';
+import { getArticlesListService, getCategoriesListService, getInstanceService } from './services';
+import { INSTANCE_ENTITY_NAME } from '../constants';
+import { useRequestData } from './useRequestData';
 
 function SwarmicTable() {
     const [articlesList, setArticlesList] = useRecoilState(articlesListAtom);
@@ -31,49 +16,22 @@ function SwarmicTable() {
 
     const [isLoading, setIsLoading] = useState(false);
     const [isError, setIsError] = useState(false);
+    const [isDictFetched, setIsDictFetched] = useState(false);
 
     const [locale, setLocale] = useState<string | undefined>();
     const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
 
-    useEffect(() => {
-        setIsError(false);
-        setIsLoading(true);
-        const articlesBaseUrl = '/api/search/articles/?search=1';
-        const localesQueryParam = locale ? ('&locale=' + locale) : '';
-        const categoriesQueryParam = selectedCategories.length ? (`&category=${encodeURI(selectedCategories.join(','))}`) : ''
-        const articlesReqUrl = articlesBaseUrl 
-            + localesQueryParam +  categoriesQueryParam;
-        const promiseList = [];
-        promiseList.push(fetchEntitiesList(articlesReqUrl, 'Article'));
-        if (!categoriesList.length && !localeList.length) {
-            promiseList.push(fetchEntitiesList('/api/categories/', 'Categories'));
-            promiseList.push(fetchInstance());
-        }
-        Promise.all(promiseList).then((promisesResult: Array<unknown>) => {
-            setIsLoading(false);
-            setIsError(false);
-
-            
-            promisesResult.forEach(promiseResult => {
-                const { entityName } = promiseResult as IGetEntitiesListPromiseValue<IArticle> 
-                | IGetEntitiesListPromiseValue<ICategory> 
-                | IGetInstancePromiseValue;
-                switch (entityName) {
-                    case 'Article':
-                        setArticlesList((promiseResult as IGetEntitiesListPromiseValue<IArticle> ).results);
-                        break;
-                    case 'Categories':
-                        setCategoriesList((promiseResult as IGetEntitiesListPromiseValue<ICategory>).results);
-                        break;
-                    case 'Instance': 
-                        setLocaleList((promiseResult as IGetInstancePromiseValue).locales);
-                        break;
-                }
-            });
-        }).catch(() => {
-            setIsError(true);
-        })
-    }, [locale, selectedCategories]);
+    useRequestData({
+        setIsError,
+        setIsLoading,
+        setIsDictFetched,
+        setArticlesList,
+        setCategoriesList,
+        setLocaleList,
+        selectedCategories,
+        locale,
+        isDictFetched
+    });
 
     const handleClickFabrick = useCallback((index: number) => {
         return () => {

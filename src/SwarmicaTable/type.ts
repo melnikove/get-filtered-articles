@@ -1,3 +1,10 @@
+import { Dispatch, SetStateAction } from "react";
+import { SetterOrUpdater } from "recoil";
+
+interface RequestParams {
+  [key: string]: unknown;
+}
+
 enum EArticleStatus {
     UNAPPROVED = 'Unapproved',
     APPROVED = 'Approved',
@@ -53,6 +60,11 @@ enum EArticleStatus {
   type ArticleItem = IArticle & { isViewed?: boolean };
   type ArticleItemsList = Array<ArticleItem>;
   
+  interface IGetArticlesReqParams {
+    categories: string[];
+    locale?: string;
+  }
+
   interface IGetEntitiesListResponse<T> {
     next: string | null;
     previous: string | null;
@@ -60,14 +72,36 @@ enum EArticleStatus {
     entityName?: string;
   }
 
-  type IGetEntitiesListPromiseValue<T> = IGetEntitiesListResponse<T> & {entityName?: 'Article' | 'Categories';}
+  interface IUseRequestDataProps {
+    setIsError: Dispatch<SetStateAction<boolean>>;
+    setIsLoading: Dispatch<SetStateAction<boolean>>;
+    setIsDictFetched: Dispatch<SetStateAction<boolean>>;
+    setArticlesList: SetterOrUpdater<ArticleItemsList>;
+    setCategoriesList: SetterOrUpdater<ICategory[]>;
+    setLocaleList: SetterOrUpdater<string[]>;
+    selectedCategories: string[];
+    locale: string | undefined;
+    isDictFetched: boolean;
+  }
+
+  enum EListEntityName {
+    Article = 'Article',
+    Category = 'Category'
+  }
+
+  type InstanceEntityName = 'Instance';
+
+  type IGetEntitiesListPromiseValue<T> = IGetEntitiesListResponse<T> & {entityName?: EListEntityName}
 
   type IGetInstanceResponse = IInstance;
 
-  type IGetInstancePromiseValue = IGetInstanceResponse & {entityName?: 'Instance'} 
+  type IGetInstancePromiseValue = IGetInstanceResponse & {entityName?: InstanceEntityName} 
 
   type ArticlesList = Array<IArticle>;
+  
 
-  export type  { EArticleStatus, IArticle, ArticleItem, ArticleItemsList, 
+  export type  { RequestParams, IUseRequestDataProps, IArticle, ArticleItem, ArticleItemsList, 
     IGetEntitiesListResponse, IGetInstanceResponse, ArticlesList, ICategory, 
-    IInstance, IGetEntitiesListPromiseValue, IGetInstancePromiseValue };
+    IInstance, IGetEntitiesListPromiseValue, IGetInstancePromiseValue, IGetArticlesReqParams, InstanceEntityName };
+
+  export {EArticleStatus, EListEntityName};

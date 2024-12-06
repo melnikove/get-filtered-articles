@@ -1,6 +1,6 @@
 import React from 'react';
 import './App.css'
-import SwarmicTable from './SwarmicTable';
+import SwarmicTable from './SwarmicaTable/SwarmicTable';
 import { RecoilRoot } from 'recoil';
 
 function App() {
