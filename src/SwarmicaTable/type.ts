@@ -6,102 +6,118 @@ interface RequestParams {
 }
 
 enum EArticleStatus {
-    UNAPPROVED = 'Unapproved',
-    APPROVED = 'Approved',
-    PUBLISHED = 'Published',
-    ARCHIVED = 'Archived'
-  }
-  
-  interface IArticle {
-    id: number
-    ext_id: number | null;
-    rank: number;
-    status: EArticleStatus;
-    highlight: {
-      title?: string;
-    };
-    public_urls: string;
-    created_at: string | null
-    updated_at: string | null;
-    published_at: string | null
-  }
+  UNAPPROVED = "Unapproved",
+  APPROVED = "Approved",
+  PUBLISHED = "Published",
+  ARCHIVED = "Archived",
+}
 
-  interface ICategory {
-    "id": number;
-    "name": {
-      ru: string;
-      "en": string;
-      "hi": string;
-    };
-    "public": boolean;
-    "image_path": string;
-  }
+interface IArticle {
+  id: number;
+  ext_id: number | null;
+  rank: number;
+  status: EArticleStatus;
+  highlight: {
+    title?: string;
+  };
+  public_urls: string;
+  created_at: string | null;
+  updated_at: string | null;
+  published_at: string | null;
+}
 
-  interface IInstance {
-      "plan": "string";
-      "locales": string[];
-      "default_locale": "string";
-      "currency": "string";
-      "base_url": "string";
-      "brand": "string";
-      "logo": "string";
-      "favicon": "string";
-      "spinner": "string";
-      "html_title": "string";
-      "authentication_providers": string[];
-      "issue_tracker": "string";
-      "n_weekly_aqi": number;
-      "n_weekly_lai": number;
-      "ticket_form": "string";
-      "features": string;
-      "license": object;
-  }
+interface ICategory {
+  id: number;
+  name: {
+    ru: string;
+    en: string;
+    hi: string;
+  };
+  public: boolean;
+  image_path: string;
+}
 
-  type ArticleItem = IArticle & { isViewed?: boolean };
-  type ArticleItemsList = Array<ArticleItem>;
-  
-  interface IGetArticlesReqParams {
-    categories: string[];
-    locale?: string;
-  }
+interface IInstance {
+  plan: "string";
+  locales: string[];
+  default_locale: "string";
+  currency: "string";
+  base_url: "string";
+  brand: "string";
+  logo: "string";
+  favicon: "string";
+  spinner: "string";
+  html_title: "string";
+  authentication_providers: string[];
+  issue_tracker: "string";
+  n_weekly_aqi: number;
+  n_weekly_lai: number;
+  ticket_form: "string";
+  features: string;
+  license: object;
+}
 
-  interface IGetEntitiesListResponse<T> {
-    next: string | null;
-    previous: string | null;
-    results: Array<T>;
-    entityName?: string;
-  }
+type ArticleItem = IArticle & { isViewed?: boolean };
+type ArticleItemsList = Array<ArticleItem>;
 
-  interface IUseRequestDataProps {
-    setIsError: Dispatch<SetStateAction<boolean>>;
-    setIsLoading: Dispatch<SetStateAction<boolean>>;
-    setIsDictFetched: Dispatch<SetStateAction<boolean>>;
-    setArticlesList: SetterOrUpdater<ArticleItemsList>;
-    setCategoriesList: SetterOrUpdater<ICategory[]>;
-    setLocaleList: SetterOrUpdater<string[]>;
-    selectedCategories: string[];
-    locale: string | undefined;
-    isDictFetched: boolean;
-  }
+interface IGetArticlesReqParams {
+  categories: string[];
+  locale?: string;
+}
 
-  enum EListEntityName {
-    Article = 'Article',
-    Category = 'Category'
-  }
+interface IGetEntitiesListResponse<T> {
+  next: string | null;
+  previous: string | null;
+  results: Array<T>;
+  entityName?: string;
+}
 
-  type InstanceEntityName = 'Instance';
+interface IUseRequestDataProps {
+  setIsError: Dispatch<SetStateAction<boolean>>;
+  setIsLoading: Dispatch<SetStateAction<boolean>>;
+  setIsDictFetched: Dispatch<SetStateAction<boolean>>;
+  setArticlesList: SetterOrUpdater<ArticleItemsList>;
+  setCategoriesList: SetterOrUpdater<ICategory[]>;
+  setLocaleList: SetterOrUpdater<string[]>;
+  selectedCategories: string[];
+  locale: string | undefined;
+  isDictFetched: boolean;
+}
 
-  type IGetEntitiesListPromiseValue<T> = IGetEntitiesListResponse<T> & {entityName?: EListEntityName}
+enum EListEntityName {
+  Article = "Article",
+  Category = "Category",
+}
 
-  type IGetInstanceResponse = IInstance;
+type InstanceEntityName = "Instance";
 
-  type IGetInstancePromiseValue = IGetInstanceResponse & {entityName?: InstanceEntityName} 
+type IGetEntitiesListPromiseValue<T> = IGetEntitiesListResponse<T> & {
+  entityName?: EListEntityName;
+};
 
-  type ArticlesList = Array<IArticle>;
-  
+type IGetInstanceResponse = IInstance;
 
-  export type  { RequestParams, IUseRequestDataProps, IArticle, ArticleItem, ArticleItemsList, 
-    IGetEntitiesListResponse, IGetInstanceResponse, ArticlesList, ICategory, 
-    IInstance, IGetEntitiesListPromiseValue, IGetInstancePromiseValue, IGetArticlesReqParams, InstanceEntityName };
+type IGetInstancePromiseValue = IGetInstanceResponse & {
+  entityName?: InstanceEntityName;
+};
 
-  export {EArticleStatus, EListEntityName};
+type ArticlesList = Array<IArticle>;
+
+export type {
+  RequestParams,
+  IUseRequestDataProps,
+  IArticle,
+  ArticleItem,
+  ArticleItemsList,
+  IGetEntitiesListResponse,
+  IGetInstanceResponse,
+  ArticlesList,
+  ICategory,
+  IInstance,
+  IGetEntitiesListPromiseValue,
+  IGetInstancePromiseValue,
+  IGetArticlesReqParams,
+  InstanceEntityName,
+};
+
+export { EArticleStatus, EListEntityName };

@@ -1,21 +1,24 @@
-import globals from "globals";
-import pluginJs from "@eslint/js";
-import tseslint from "typescript-eslint";
-import pluginReact from "eslint-plugin-react";
-
-
-/** @type {import('eslint').Linter.Config[]} */
-export default [
-  {
-    files: ["**/*.{js,mjs,cjs,ts,jsx,tsx}"],
-    plugins: {
-      react: pluginReact,
-    },
+export default [{
+  env: {
+    browser: true,
+    es2021: true,
   },
-  {languageOptions: { globals: globals.browser }},
-  pluginJs.configs.recommended,
-  ...tseslint.configs.recommended,
-  pluginReact.configs.flat.recommended,
-  {ignores: ["dist/", "node_modules/", "public/"]},
-  
-];
+  extends: [
+    "eslint:recommended",
+    "plugin:react/recommended",
+    "plugin:prettier/recommended",
+  ],
+  parserOptions: {
+    ecmaVersion: 12,
+    sourceType: "module",
+  },
+  rules: {
+    "prettier/prettier": [
+      "error",
+      {
+        singleQuote: true,
+        semi: false,
+      },
+    ],
+  },
+}];

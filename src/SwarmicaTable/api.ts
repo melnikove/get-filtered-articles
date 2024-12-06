@@ -1,5 +1,5 @@
 const apiRequestGet = (url: string) => {
-    return fetch(url);
-}
+  return fetch(url);
+};
 
-export { apiRequestGet }
+export { apiRequestGet };
