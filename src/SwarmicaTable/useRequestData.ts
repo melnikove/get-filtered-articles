@@ -1,5 +1,7 @@
 import { useEffect } from "react";
+import { v4 as uuidv4 } from "uuid";
 import {
+  ArticleItemsList,
   EListEntityName,
   IArticle,
   ICategory,
@@ -13,6 +15,7 @@ import {
   getInstanceService,
 } from "./services";
 import { INSTANCE_ENTITY_NAME } from "../constants";
+import { getViewedIds } from "../helpers";
 
 const useRequestData = (params: IUseRequestDataProps) => {
   const {
@@ -50,10 +53,15 @@ const useRequestData = (params: IUseRequestDataProps) => {
             | IGetInstancePromiseValue;
           switch (entityName) {
             case EListEntityName.Article:
-              setArticlesList(
-                (promiseResult as IGetEntitiesListPromiseValue<IArticle>)
-                  .results,
-              );
+              const isViewedIds = getViewedIds();
+              const articlesList: ArticleItemsList = (
+                promiseResult as IGetEntitiesListPromiseValue<IArticle>
+              ).results.map((article: IArticle) => ({
+                ...article,
+                uuid: uuidv4(),
+                isViewed: isViewedIds.includes(String(article.id)),
+              }));
+              setArticlesList(articlesList);
               break;
             case EListEntityName.Category:
               setCategoriesList(

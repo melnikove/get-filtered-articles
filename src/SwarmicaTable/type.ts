@@ -57,7 +57,10 @@ interface IInstance {
   license: object;
 }
 
-type ArticleItem = IArticle & { isViewed?: boolean };
+type ArticleItem = IArticle & {
+  uuid: string;
+  isViewed?: boolean;
+};
 type ArticleItemsList = Array<ArticleItem>;
 
 interface IGetArticlesReqParams {

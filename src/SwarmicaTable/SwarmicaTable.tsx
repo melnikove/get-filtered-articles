@@ -7,6 +7,7 @@ import {
   localesListAtom,
 } from "../atoms";
 import {
+  Button,
   Container,
   FormControl,
   InputLabel,
@@ -23,6 +24,7 @@ import {
 } from "@mui/material";
 import { markToLS } from "../helpers";
 import { useRequestData } from "./useRequestData";
+import { SELECTED_COLOR } from "../constants";
 
 function SwarmicTable() {
   const [articlesList, setArticlesList] = useRecoilState(articlesListAtom);
@@ -72,9 +74,10 @@ function SwarmicTable() {
     [],
   );
 
-  if (isError) return <h3>Ошибка загрузки...</h3>;
-
-  if (isLoading) return <h3>Загрузка...</h3>;
+  const handleResetClick = useCallback(() => {
+    setLocale(undefined);
+    setSelectedCategories([]);
+  }, []);
 
   return (
     <Container
@@ -92,8 +95,9 @@ function SwarmicTable() {
         <InputLabel id="select-locale-label-id">Locale</InputLabel>
         <Select
           labelId="select-locale-label-id"
+          disabled={isError || isLoading}
           id="select-locale"
-          value={locale}
+          value={locale || ""}
           label={"Locale"}
           onChange={handleChangeLocale}
           inputProps={{
@@ -114,12 +118,13 @@ function SwarmicTable() {
           ))}
         </Select>
       </FormControl>
-      <FormControl fullWidth style={{ marginTop: 20 }}>
+      <FormControl fullWidth sx={{ marginTop: "20px" }}>
         <InputLabel id="select-category-label-id">Categories</InputLabel>
         <Select
           labelId="select-category-label-id"
           id="select-category"
           multiple
+          disabled={isError || isLoading}
           value={selectedCategories}
           label={"Categories"}
           onChange={handleChangeSelectedCategory}
@@ -141,40 +146,58 @@ function SwarmicTable() {
           ))}
         </Select>
       </FormControl>
-      <TableContainer component={Paper} style={{ marginTop: 20 }}>
-        <Table sx={{ minWidth: 650 }} stickyHeader aria-label="sticky table">
-          <TableHead>
-            <TableRow>
-              <TableCell align="left">
-                <b>Title</b>
-              </TableCell>
-              <TableCell align="center">
-                <b>Просмотрено</b>
-              </TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {articlesList?.map((article: ArticleItem, index) => (
-              <TableRow
-                key={article.id}
-                sx={{
-                  cursor: "pointer",
-                  "&:last-child td, &:last-child th": { border: 0 },
-                  ...(article.isViewed && { backgroundColor: "#b1fcc5" }),
-                }}
-                onClick={handleClickFabrick(index)}
-              >
-                <TableCell component="th" scope="row">
-                  {article.highlight.title || "Нет данных"}
+      <Button
+        variant="contained"
+        sx={{
+          width: "150px",
+          marginTop: "20px",
+        }}
+        onClick={handleResetClick}
+      >
+        Reset
+      </Button>
+
+      {isError && <h3>Ошибка загрузки...</h3>}
+      {isLoading && <h3>Загрузка...</h3>}
+
+      {!isError && !isLoading && (
+        <TableContainer component={Paper} sx={{ marginTop: "20px" }}>
+          <Table sx={{ minWidth: 650 }} stickyHeader aria-label="sticky table">
+            <TableHead>
+              <TableRow>
+                <TableCell align="left">
+                  <b>Title</b>
                 </TableCell>
                 <TableCell align="center">
-                  {article.isViewed ? "Да" : "Нет"}
+                  <b>Просмотрено</b>
                 </TableCell>
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
+            </TableHead>
+            <TableBody>
+              {articlesList?.map((article: ArticleItem, index) => (
+                <TableRow
+                  key={article.uuid}
+                  sx={{
+                    cursor: "pointer",
+                    "&:last-child td, &:last-child th": { border: 0 },
+                    ...(article.isViewed && {
+                      backgroundColor: SELECTED_COLOR,
+                    }),
+                  }}
+                  onClick={handleClickFabrick(index)}
+                >
+                  <TableCell component="th" scope="row">
+                    {article.highlight.title || "Нет данных"}
+                  </TableCell>
+                  <TableCell align="center">
+                    {article.isViewed ? "Да" : "Нет"}
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      )}
     </Container>
   );
 }

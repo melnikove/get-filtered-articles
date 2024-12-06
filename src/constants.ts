@@ -7,3 +7,5 @@ export const API_CATEGORIES_URL = "/api/categories/";
 export const API_INSTANCE_URL = "/api/instance/";
 
 export const INSTANCE_ENTITY_NAME = "Instance";
+
+export const SELECTED_COLOR = "#b1fcc5";
