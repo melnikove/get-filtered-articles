@@ -1,12 +1,12 @@
 import React, { useCallback, useState } from 'react';
 import { useRecoilState } from "recoil";
-import { ArticleItem, IArticle, ICategory, IGetEntitiesListResponse, IInstance } from "./type";
+import { ArticleItem, IArticle, ICategory, IGetEntitiesListPromiseValue, IGetInstancePromiseValue } from "./type";
 import { articlesListAtom, categoriesListAtom, localesListAtom } from "./atoms";
 import { useEffect } from "react";
 import { FormControl, InputLabel, MenuItem, Paper, Select, SelectChangeEvent, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
 import { markToLS } from './helper';
 
-const fetchEntitiesList = async function<T>(requestUrl: string, entityName: string): Promise<IGetEntitiesListResponse<T> | null> {
+const fetchEntitiesList = async function<T>(requestUrl: string, entityName: string): Promise<IGetEntitiesListPromiseValue<T>> {
         const resp = await fetch(requestUrl);
         const result = await resp.json();
         return {
@@ -15,7 +15,7 @@ const fetchEntitiesList = async function<T>(requestUrl: string, entityName: stri
         };
 }
 
-const fetchInstance = async (): Promise<IInstance | null> => {
+const fetchInstance = async (): Promise<IGetInstancePromiseValue> => {
         const resp = await fetch('/api/instance/');
         const result = await resp.json();
         return {
@@ -52,18 +52,21 @@ function SwarmicTable() {
         Promise.all(promiseList).then((promisesResult: Array<unknown>) => {
             setIsLoading(false);
             setIsError(false);
+
             
             promisesResult.forEach(promiseResult => {
-                const { entityName,  } = promiseResult as {entityName: string;};
+                const { entityName } = promiseResult as IGetEntitiesListPromiseValue<IArticle> 
+                | IGetEntitiesListPromiseValue<ICategory> 
+                | IGetInstancePromiseValue;
                 switch (entityName) {
                     case 'Article':
-                        setArticlesList((promiseResult as IGetEntitiesListResponse<IArticle>).results);
+                        setArticlesList((promiseResult as IGetEntitiesListPromiseValue<IArticle> ).results);
                         break;
                     case 'Categories':
-                        setCategoriesList((promiseResult as IGetEntitiesListResponse<ICategory>).results);
+                        setCategoriesList((promiseResult as IGetEntitiesListPromiseValue<ICategory>).results);
                         break;
                     case 'Instance': 
-                        setLocaleList((promiseResult as IInstance).locales);
+                        setLocaleList((promiseResult as IGetInstancePromiseValue).locales);
                         break;
                 }
             });
@@ -128,7 +131,6 @@ function SwarmicTable() {
                 labelId="select-category-label-id"
                 id="select-category"
                 multiple
-                // @ts-ignore
                 value={selectedCategories}
                 label={"Categories"}
                 onChange={handleChangeSelectedCategory}
@@ -146,7 +148,7 @@ function SwarmicTable() {
                         key={String(category.id)}
                         value={String(category.id)}
                     >
-                        {category.name?.ru || category.name?.ru}
+                        {category.name?.ru || category.name?.en}
                     </MenuItem>
                 ))}
             </Select>
@@ -167,7 +169,7 @@ function SwarmicTable() {
                             onClick={handleClickFabrick(index)}
                         >
                         <TableCell component="th" scope="row">
-                            {article.highlight.title}
+                            {article.highlight.title || 'Нет данных'}
                         </TableCell>
                         <TableCell align="center">{article.isViewed ? 'Да' : 'Нет'}</TableCell>
                         </TableRow>
