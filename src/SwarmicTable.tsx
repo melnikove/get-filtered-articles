@@ -52,7 +52,7 @@ function SwarmicTable() {
         Promise.all(promiseList).then((promisesResult: Array<unknown>) => {
             setIsLoading(false);
             setIsError(false);
-            console.log('promisesResult=', promisesResult);
+            
             promisesResult.forEach(promiseResult => {
                 const { entityName,  } = promiseResult as {entityName: string;};
                 switch (entityName) {
@@ -68,14 +68,9 @@ function SwarmicTable() {
                 }
             });
         }).catch(() => {
-            console.log('!!!!error');
             setIsError(true);
         })
     }, [locale, selectedCategories]);
-
-    console.log('articlesList=', articlesList);
-    console.log('categoriesList=', categoriesList);
-    console.log('localeList=', localeList);
 
     const handleClickFabrick = useCallback((index: number) => {
         return () => {
@@ -91,16 +86,12 @@ function SwarmicTable() {
     }, []);
 
     const handleChangeSelectedCategory = useCallback((event: SelectChangeEvent<string[]>) => {
-        console.log('handleChangeSelectedCategory:', event);
         setSelectedCategories(event.target.value as string[]);
     }, []);
 
     if (isLoading) return <h3>Загрузка...</h3>;
 
     if (isError) return <h3>Ошибка загрузки...</h3>;
-
-    
-    console.log('locale=', locale);
 
     return (
         <div>
@@ -109,11 +100,9 @@ function SwarmicTable() {
               <Select
                 labelId="select-locale-label-id"
                 id="select-locale"
-                // multiple
                 value={locale}
                 label={"Locale"}
                 onChange={handleChangeLocale}
-                // input={<OutlinedInput label="Locale" style={{width: 150}}/>}
                 inputProps={{
                     width: 150
                 }}
@@ -127,7 +116,6 @@ function SwarmicTable() {
                     <MenuItem
                         key={locale}
                         value={locale}
-                        // style={getStyles(name, personName, theme)}
                     >
                         {locale}
                     </MenuItem>
@@ -144,7 +132,6 @@ function SwarmicTable() {
                 value={selectedCategories}
                 label={"Categories"}
                 onChange={handleChangeSelectedCategory}
-                // input={<OutlinedInput label="Locale" style={{width: 150}}/>}
                 inputProps={{
                     width: 150
                 }}
@@ -158,7 +145,6 @@ function SwarmicTable() {
                     <MenuItem
                         key={String(category.id)}
                         value={String(category.id)}
-                        // style={getStyles(name, personName, theme)}
                     >
                         {category.name?.ru || category.name?.ru}
                     </MenuItem>

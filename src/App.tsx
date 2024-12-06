@@ -3,7 +3,6 @@ import './App.css'
 import SwarmicTable from './SwarmicTable';
 import { RecoilRoot } from 'recoil';
 
-
 function App() {
 
   return (

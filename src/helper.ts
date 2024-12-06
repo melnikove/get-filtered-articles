@@ -3,7 +3,7 @@ import { LS_KEY } from "./constants"
 export const markToLS = (id: string) => {
     if (window) {
         const lsRecord = window.localStorage.getItem(LS_KEY);
-        console.log('markToLS lsRecord:', lsRecord);
+        
         if (lsRecord) {
             try {
                 const lsRecordArray = lsRecord.split(',');
