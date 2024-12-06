@@ -1,15 +1,13 @@
 import React from 'react';
 import './App.css'
-import SwarmicTable from './SwarmicaTable/SwarmicTable';
+import SwarmicaTable from './SwarmicaTable/SwarmicaTable';
 import { RecoilRoot } from 'recoil';
 
 function App() {
 
   return (
     <RecoilRoot>
-      <div>
-        <SwarmicTable/>
-       </div>
+        <SwarmicaTable/>
     </RecoilRoot>
   )
 }

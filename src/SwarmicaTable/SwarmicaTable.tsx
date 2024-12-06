@@ -3,7 +3,7 @@ import { useRecoilState } from "recoil";
 import { ArticleItem, EListEntityName, IArticle, ICategory, IGetEntitiesListPromiseValue, IGetInstancePromiseValue } from "./type";
 import { articlesListAtom, categoriesListAtom, localesListAtom } from "../atoms";
 import { useEffect } from "react";
-import { FormControl, InputLabel, MenuItem, Paper, Select, SelectChangeEvent, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
+import { Box, Container, FormControl, InputLabel, MenuItem, Paper, Select, SelectChangeEvent, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
 import { markToLS } from '../helpers';
 import { getArticlesListService, getCategoriesListService, getInstanceService } from './services';
 import { INSTANCE_ENTITY_NAME } from '../constants';
@@ -55,7 +55,16 @@ function SwarmicTable() {
     if (isError) return <h3>Ошибка загрузки...</h3>;
 
     return (
-        <div>
+        <Container component="section" 
+            sx={{ 
+                display: 'flex',
+                flexDirection: 'column',
+                p: 2, 
+                border: '1px solid grey',
+                width:'100%',
+                height: 'auto',
+            }}
+        >
             <FormControl fullWidth>
               <InputLabel id="select-locale-label-id">Locale</InputLabel>
               <Select
@@ -112,7 +121,11 @@ function SwarmicTable() {
             </Select>
             </FormControl>
              <TableContainer component={Paper} style={{marginTop: 20}}>
-                <Table sx={{ minWidth: 650 }} aria-label="simple table">
+                <Table 
+                    sx={{ minWidth: 650 }}
+                    stickyHeader
+                    aria-label="sticky table"
+                >
                     <TableHead>
                     <TableRow>
                         <TableCell align="left"><b>Title</b></TableCell>
@@ -123,7 +136,11 @@ function SwarmicTable() {
                     {articlesList?.map(( article: ArticleItem, index) => (
                         <TableRow
                             key={article.id}
-                            sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                            sx={{ 
+                                cursor: 'pointer',
+                                '&:last-child td, &:last-child th': { border: 0 },
+                                ...article.isViewed && {backgroundColor: '#b1fcc5'},
+                            }}
                             onClick={handleClickFabrick(index)}
                         >
                         <TableCell component="th" scope="row">
@@ -135,7 +152,7 @@ function SwarmicTable() {
                     </TableBody>
                 </Table>
             </TableContainer>
-        </div>
+        </Container>
     );
 }
 
