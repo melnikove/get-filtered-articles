@@ -135,7 +135,7 @@ function SwarmicTable() {
             <InputLabel id="select-locale-label-id">Locale</InputLabel>
             <Select
               labelId="select-locale-label-id"
-              disabled={isError || isLoading}
+              disabled={isLoading}
               id="select-locale"
               value={locale || ""}
               label={"Locale"}
@@ -164,7 +164,7 @@ function SwarmicTable() {
               labelId="select-category-label-id"
               id="select-category"
               multiple
-              disabled={isError || isLoading}
+              disabled={isLoading}
               value={selectedCategories}
               label={"Categories"}
               onChange={handleChangeSelectedCategory}
@@ -189,7 +189,7 @@ function SwarmicTable() {
           <FormControl fullWidth sx={{ marginTop: "20px" }}>
             <TextField
               required={true}
-              disabled={isError || isLoading}
+              disabled={isLoading}
               label={"Search string"}
               onChange={debouncedHandler}
               inputRef={searchRef}
