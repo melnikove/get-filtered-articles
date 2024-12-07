@@ -6,7 +6,11 @@ import {
   categoriesListAtom,
   localesListAtom,
 } from "../atoms";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import {
+  Accordion,
+  AccordionDetails,
+  AccordionSummary,
   Button,
   Container,
   FormControl,
@@ -85,14 +89,17 @@ function SwarmicTable() {
     setSelectedCategories([]);
     setArticlesList([]);
     if (searchRef.current) {
-        (searchRef.current as HTMLInputElement).value = '';
-        setSearchString('');
+      (searchRef.current as HTMLInputElement).value = "";
+      setSearchString("");
     }
   }, [searchRef]);
 
-  const handleChangeSearchStr = useCallback((event: ChangeEvent<HTMLInputElement>) => {
-    setSearchString(event.target.value);
-  }, []);
+  const handleChangeSearchStr = useCallback(
+    (event: ChangeEvent<HTMLInputElement>) => {
+      setSearchString(event.target.value);
+    },
+    [],
+  );
 
   const debouncedHandler = debounce(handleChangeSearchStr, 300);
 
@@ -108,85 +115,96 @@ function SwarmicTable() {
         height: "auto",
       }}
     >
-      <FormControl fullWidth>
-        <InputLabel id="select-locale-label-id">Locale</InputLabel>
-        <Select
-          labelId="select-locale-label-id"
-          disabled={isError || isLoading}
-          id="select-locale"
-          value={locale || ""}
-          label={"Locale"}
-          onChange={handleChangeLocale}
-          inputProps={{
-            width: 150,
-          }}
-          MenuProps={{
-            PaperProps: {
-              style: {
-                width: 150,
-              },
-            },
-          }}
+      <Accordion defaultExpanded={true}>
+        <AccordionSummary
+          expandIcon={<ExpandMoreIcon />}
+          aria-controls="panel1-content"
+          id="panel1-header"
+          sx={{fontWeight: 'bolder'}}
         >
-          {localeList.map((locale) => (
-            <MenuItem key={locale} value={locale}>
-              {locale}
-            </MenuItem>
-          ))}
-        </Select>
-      </FormControl>
-      <FormControl fullWidth sx={{ marginTop: "20px" }}>
-        <InputLabel id="select-category-label-id">Categories</InputLabel>
-        <Select
-          labelId="select-category-label-id"
-          id="select-category"
-          multiple
-          disabled={isError || isLoading}
-          value={selectedCategories}
-          label={"Categories"}
-          onChange={handleChangeSelectedCategory}
-          inputProps={{
-            width: 150,
-          }}
-          MenuProps={{
-            PaperProps: {
-              style: {
+          <div>Блок фильтрации</div>
+        </AccordionSummary>
+        <AccordionDetails>
+          <FormControl fullWidth>
+            <InputLabel id="select-locale-label-id">Locale</InputLabel>
+            <Select
+              labelId="select-locale-label-id"
+              disabled={isError || isLoading}
+              id="select-locale"
+              value={locale || ""}
+              label={"Locale"}
+              onChange={handleChangeLocale}
+              inputProps={{
                 width: 150,
-              },
-            },
-          }}
-        >
-          {categoriesList.map((category) => (
-            <MenuItem key={String(category.id)} value={String(category.id)}>
-              {category.name?.ru || category.name?.en}
-            </MenuItem>
-          ))}
-        </Select>
-      </FormControl>
-      <FormControl fullWidth sx={{ marginTop: "20px" }}>
-        <TextField
-            required={true}
-            label={'Search'}
-            placeholder={'Search'}
-            onChange={debouncedHandler}
-            inputRef={searchRef}
-        />
-      </FormControl>
-      <Button
-        variant="contained"
-        sx={{
-          width: "150px",
-          marginTop: "20px",
-        }}
-        onClick={handleResetClick}
-      >
-        Reset
-      </Button>
+              }}
+              MenuProps={{
+                PaperProps: {
+                  style: {
+                    width: 150,
+                  },
+                },
+              }}
+            >
+              {localeList.map((locale) => (
+                <MenuItem key={locale} value={locale}>
+                  {locale}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+          <FormControl fullWidth sx={{ marginTop: "20px" }}>
+            <InputLabel id="select-category-label-id">Categories</InputLabel>
+            <Select
+              labelId="select-category-label-id"
+              id="select-category"
+              multiple
+              disabled={isError || isLoading}
+              value={selectedCategories}
+              label={"Categories"}
+              onChange={handleChangeSelectedCategory}
+              inputProps={{
+                width: 150,
+              }}
+              MenuProps={{
+                PaperProps: {
+                  style: {
+                    width: 150,
+                  },
+                },
+              }}
+            >
+              {categoriesList.map((category) => (
+                <MenuItem key={String(category.id)} value={String(category.id)}>
+                  {category.name?.ru || category.name?.en}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+          <FormControl fullWidth sx={{ marginTop: "20px" }}>
+            <TextField
+              required={true}
+              label={"Search string"}
+              onChange={debouncedHandler}
+              inputRef={searchRef}
+            />
+          </FormControl>
+          <Button
+            variant="contained"
+            sx={{
+              width: "150px",
+              marginTop: "20px",
+            }}
+            onClick={handleResetClick}
+          >
+            Reset
+          </Button>
+        </AccordionDetails>
+      </Accordion>
 
       {isError && <h3>Ошибка загрузки...</h3>}
       {isLoading && <h3>Загрузка...</h3>}
-    
-      {!isError && !isLoading && !articlesList.length && <h3>Нет данных</h3>}  
+
+      {!isError && !isLoading && !articlesList.length && <h3>Нет данных</h3>}
       {!isError && !isLoading && !!articlesList.length && (
         <TableContainer component={Paper} sx={{ marginTop: "20px" }}>
           <Table sx={{ minWidth: 650 }} stickyHeader aria-label="sticky table">

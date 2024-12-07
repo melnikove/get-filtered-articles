@@ -37,7 +37,11 @@ const useRequestData = (params: IUseRequestDataProps) => {
     const promiseList = [];
     if (searchString) {
       promiseList.push(
-        getArticlesListService({ locale, categories: selectedCategories, searchString }),
+        getArticlesListService({
+          locale,
+          categories: selectedCategories,
+          searchString,
+        }),
       );
     }
     if (!isDictFetched) {
