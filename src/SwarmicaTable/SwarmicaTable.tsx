@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from "react";
+import React, { ChangeEvent, useCallback, useRef, useState } from "react";
 import { useRecoilState } from "recoil";
 import { ArticleItem } from "./type";
 import {
@@ -21,6 +21,8 @@ import {
   TableContainer,
   TableHead,
   TableRow,
+  TextField,
+  debounce,
 } from "@mui/material";
 import { markToLS } from "../helpers";
 import { useRequestData } from "./useRequestData";
@@ -38,6 +40,7 @@ function SwarmicTable() {
 
   const [locale, setLocale] = useState<string | undefined>();
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+  const [searchString, setSearchString] = useState<string | null>(null);
 
   useRequestData({
     setIsError,
@@ -48,6 +51,7 @@ function SwarmicTable() {
     setLocaleList,
     selectedCategories,
     locale,
+    searchString,
     isDictFetched,
   });
 
@@ -74,10 +78,23 @@ function SwarmicTable() {
     [],
   );
 
+  const searchRef = useRef(null);
+
   const handleResetClick = useCallback(() => {
     setLocale(undefined);
     setSelectedCategories([]);
+    setArticlesList([]);
+    if (searchRef.current) {
+        (searchRef.current as HTMLInputElement).value = '';
+        setSearchString('');
+    }
+  }, [searchRef]);
+
+  const handleChangeSearchStr = useCallback((event: ChangeEvent<HTMLInputElement>) => {
+    setSearchString(event.target.value);
   }, []);
+
+  const debouncedHandler = debounce(handleChangeSearchStr, 300);
 
   return (
     <Container
@@ -146,6 +163,15 @@ function SwarmicTable() {
           ))}
         </Select>
       </FormControl>
+      <FormControl fullWidth sx={{ marginTop: "20px" }}>
+        <TextField
+            required={true}
+            label={'Search'}
+            placeholder={'Search'}
+            onChange={debouncedHandler}
+            inputRef={searchRef}
+        />
+      </FormControl>
       <Button
         variant="contained"
         sx={{
@@ -159,8 +185,9 @@ function SwarmicTable() {
 
       {isError && <h3>Ошибка загрузки...</h3>}
       {isLoading && <h3>Загрузка...</h3>}
-
-      {!isError && !isLoading && (
+    
+      {!isError && !isLoading && !articlesList.length && <h3>Нет данных</h3>}  
+      {!isError && !isLoading && !!articlesList.length && (
         <TableContainer component={Paper} sx={{ marginTop: "20px" }}>
           <Table sx={{ minWidth: 650 }} stickyHeader aria-label="sticky table">
             <TableHead>
@@ -174,7 +201,7 @@ function SwarmicTable() {
               </TableRow>
             </TableHead>
             <TableBody>
-              {articlesList?.map((article: ArticleItem, index) => (
+              {articlesList.map((article: ArticleItem, index) => (
                 <TableRow
                   key={article.uuid}
                   sx={{

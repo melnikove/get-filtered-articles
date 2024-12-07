@@ -29,11 +29,11 @@ const getEntitiesList = async function <T>(
 };
 
 const getArticlesListService = async (params: IGetArticlesReqParams) => {
-  const { locale, categories } = params;
+  const { locale, categories, searchString } = params;
 
   const url =
     API_ARTICLES_URL +
-    "?search=1" +
+    `?search=${searchString}` +
     (locale ? "&locale=" + locale : "") +
     (categories.length ? `&category=${encodeURI(categories.join(","))}` : "");
 

@@ -27,6 +27,7 @@ const useRequestData = (params: IUseRequestDataProps) => {
     setLocaleList,
     selectedCategories,
     locale,
+    searchString,
     isDictFetched,
   } = params;
 
@@ -34,9 +35,11 @@ const useRequestData = (params: IUseRequestDataProps) => {
     setIsError(false);
     setIsLoading(true);
     const promiseList = [];
-    promiseList.push(
-      getArticlesListService({ locale, categories: selectedCategories }),
-    );
+    if (searchString) {
+      promiseList.push(
+        getArticlesListService({ locale, categories: selectedCategories, searchString }),
+      );
+    }
     if (!isDictFetched) {
       promiseList.push(getCategoriesListService());
       promiseList.push(getInstanceService());
@@ -80,7 +83,7 @@ const useRequestData = (params: IUseRequestDataProps) => {
       .catch(() => {
         setIsError(true);
       });
-  }, [locale, selectedCategories]);
+  }, [locale, selectedCategories, searchString]);
 };
 
 export { useRequestData };

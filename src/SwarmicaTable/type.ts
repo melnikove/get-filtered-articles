@@ -65,6 +65,7 @@ type ArticleItemsList = Array<ArticleItem>;
 
 interface IGetArticlesReqParams {
   categories: string[];
+  searchString: string;
   locale?: string;
 }
 
@@ -84,6 +85,7 @@ interface IUseRequestDataProps {
   setLocaleList: SetterOrUpdater<string[]>;
   selectedCategories: string[];
   locale: string | undefined;
+  searchString: string | null;
   isDictFetched: boolean;
 }
 
