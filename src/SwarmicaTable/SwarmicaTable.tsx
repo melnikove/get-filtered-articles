@@ -124,7 +124,13 @@ function SwarmicTable() {
         >
           <div>Блок фильтрации</div>
         </AccordionSummary>
-        <AccordionDetails>
+        <AccordionDetails 
+            sx={{
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'flex-start',
+            }}
+        >
           <FormControl fullWidth>
             <InputLabel id="select-locale-label-id">Locale</InputLabel>
             <Select
@@ -183,6 +189,7 @@ function SwarmicTable() {
           <FormControl fullWidth sx={{ marginTop: "20px" }}>
             <TextField
               required={true}
+              disabled={isError || isLoading}
               label={"Search string"}
               onChange={debouncedHandler}
               inputRef={searchRef}
