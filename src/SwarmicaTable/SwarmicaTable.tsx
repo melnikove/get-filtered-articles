@@ -1,4 +1,10 @@
-import React, { ChangeEvent, useCallback, useMemo, useRef, useState } from "react";
+import React, {
+  ChangeEvent,
+  useCallback,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { useRecoilState } from "recoil";
 import { ArticleItem } from "./type";
 import {
@@ -13,11 +19,7 @@ import {
   AccordionSummary,
   Button,
   Container,
-  FormControl,
-  InputLabel,
-  MenuItem,
   Paper,
-  Select,
   SelectChangeEvent,
   Table,
   TableBody,
@@ -25,12 +27,14 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-  TextField,
   debounce,
 } from "@mui/material";
 import { markToLS } from "../helpers";
 import { useRequestData } from "./useRequestData";
 import { SELECTED_COLOR } from "../constants";
+import SelectLocale from "./components/SelectLocale/SelectLocale";
+import SelectedCategories from "./components/SelectCategories/SelectCategories";
+import SearchString from "./components/SearchString/SearchString";
 
 function SwarmicTable() {
   const [articlesList, setArticlesList] = useRecoilState(articlesListAtom);
@@ -103,8 +107,10 @@ function SwarmicTable() {
 
   const debouncedHandler = debounce(handleChangeSearchStr, 300);
 
-  const haveNoFilterValues = useMemo(() => !locale && !selectedCategories.length && !searchString, 
-  [locale, selectedCategories, searchString]);
+  const haveNoFilterValues = useMemo(
+    () => !locale && !selectedCategories.length && !searchString,
+    [locale, selectedCategories, searchString],
+  );
 
   return (
     <Container
@@ -123,81 +129,38 @@ function SwarmicTable() {
           expandIcon={<ExpandMoreIcon />}
           aria-controls="panel1-content"
           id="panel1-header"
-          sx={{fontWeight: 'bolder'}}
+          sx={{ fontWeight: "bolder" }}
         >
           <div>Блок фильтрации</div>
         </AccordionSummary>
-        <AccordionDetails 
-            sx={{
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'flex-start',
-            }}
+        <AccordionDetails
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "flex-start",
+          }}
         >
-          <FormControl fullWidth>
-            <InputLabel id="select-locale-label-id">Locale</InputLabel>
-            <Select
-              labelId="select-locale-label-id"
-              disabled={isLoading}
-              id="select-locale"
-              value={locale || ""}
-              label={"Locale"}
-              onChange={handleChangeLocale}
-              inputProps={{
-                width: 150,
-              }}
-              MenuProps={{
-                PaperProps: {
-                  style: {
-                    width: 150,
-                  },
-                },
-              }}
-            >
-              {localeList.map((locale) => (
-                <MenuItem key={locale} value={locale}>
-                  {locale}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-          <FormControl fullWidth sx={{ marginTop: "20px" }}>
-            <InputLabel id="select-category-label-id">Categories</InputLabel>
-            <Select
-              labelId="select-category-label-id"
-              id="select-category"
-              multiple
-              disabled={isLoading}
-              value={selectedCategories}
-              label={"Categories"}
-              onChange={handleChangeSelectedCategory}
-              inputProps={{
-                width: 150,
-              }}
-              MenuProps={{
-                PaperProps: {
-                  style: {
-                    width: 150,
-                  },
-                },
-              }}
-            >
-              {categoriesList.map((category) => (
-                <MenuItem key={String(category.id)} value={String(category.id)}>
-                  {category.name?.ru || category.name?.en}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-          <FormControl fullWidth sx={{ marginTop: "20px" }}>
-            <TextField
-              required={true}
-              disabled={isLoading}
-              label={"Search string"}
-              onChange={debouncedHandler}
-              inputRef={searchRef}
-            />
-          </FormControl>
+          <SelectLocale
+            {...{
+              locale,
+              localeList,
+              disabled: isLoading,
+              handleChangeLocale,
+            }}
+          />
+          <SelectedCategories
+            {...{
+              categoriesList,
+              selectedCategories,
+              disabled: isLoading,
+              handleChangeSelectedCategory,
+            }}
+          />
+          <SearchString
+            disabled={isLoading}
+            handleChange={debouncedHandler}
+            ref={searchRef}
+          />
           <Button
             variant="contained"
             sx={{
@@ -258,4 +221,4 @@ function SwarmicTable() {
   );
 }
 
-export default React.memo(SwarmicTable);
+export default SwarmicTable;
