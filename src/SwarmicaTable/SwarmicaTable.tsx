@@ -1,4 +1,4 @@
-import React, { ChangeEvent, useCallback, useRef, useState } from "react";
+import React, { ChangeEvent, useCallback, useMemo, useRef, useState } from "react";
 import { useRecoilState } from "recoil";
 import { ArticleItem } from "./type";
 import {
@@ -103,6 +103,9 @@ function SwarmicTable() {
 
   const debouncedHandler = debounce(handleChangeSearchStr, 300);
 
+  const haveNoFilterValues = useMemo(() => !locale && !selectedCategories.length && !searchString, 
+  [locale, selectedCategories, searchString]);
+
   return (
     <Container
       component="section"
@@ -201,6 +204,7 @@ function SwarmicTable() {
               width: "150px",
               marginTop: "20px",
             }}
+            disabled={isLoading || haveNoFilterValues}
             onClick={handleResetClick}
           >
             Reset
