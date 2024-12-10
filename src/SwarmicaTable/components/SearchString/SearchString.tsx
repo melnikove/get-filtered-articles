@@ -1,4 +1,4 @@
-import React, { FC, ForwardRefRenderFunction, forwardRef } from "react";
+import React, { ForwardRefRenderFunction, forwardRef } from "react";
 import { ISearchStringProps } from "./type";
 import { FormControl, TextField } from "@mui/material";
 

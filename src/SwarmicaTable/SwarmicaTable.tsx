@@ -53,6 +53,7 @@ function SwarmicTable() {
 
   const searchRef = useRef(null);
   const selectLocaleRef = useRef(null);
+  const selectCategoriesRef = useRef(null);
 
   const currentFocusRef = useRef(null);
 
@@ -98,13 +99,9 @@ function SwarmicTable() {
   const handleChangeSelectedCategory = useCallback(
     (event: SelectChangeEvent<string[]>) => {
       setSelectedCategories(event.target.value as string[]);
-      /* так как этот селект с множественным выборомм, 
-      то у него не при потере фокуса не закрывается список выбора. 
-      Но при исчезновении фокуса пропадает способность выбора элементов с клавиатуры.
-      Нужно просто обнулить фокус предыдущего элемента */
-      currentFocusRef.current = null;
+      currentFocusRef.current = selectCategoriesRef.current;
     },
-    [currentFocusRef],
+    [currentFocusRef, selectCategoriesRef],
   );
 
   const handleResetClick = useCallback(() => {
@@ -115,7 +112,10 @@ function SwarmicTable() {
       (searchRef.current as HTMLInputElement).value = "";
       setSearchString("");
     }
-  }, [searchRef, selectLocaleRef]);
+    if (currentFocusRef.current) {
+      (currentFocusRef.current as HTMLInputElement).focus();
+    }
+  }, [searchRef, currentFocusRef]);
 
   useEffect(() => {
     if (currentFocusRef.current) {
@@ -180,6 +180,7 @@ function SwarmicTable() {
               categoriesList,
               selectedCategories,
               disabled: isLoading,
+              ref: selectCategoriesRef,
               handleChangeSelectedCategory,
             }}
           />
@@ -207,15 +208,8 @@ function SwarmicTable() {
 
       {!isError && !isLoading && !articlesList.length && <h3>Нет данных</h3>}
       {!isError && !isLoading && !!articlesList.length && (
-        <TableContainer
-          component={Paper}
-          sx={{ marginTop: "20px" }}
-        >
-          <Table
-            sx={{ minWidth: 650 }}
-            stickyHeader
-            aria-label="sticky table"
-          >
+        <TableContainer component={Paper} sx={{ marginTop: "20px" }}>
+          <Table sx={{ minWidth: 650 }} stickyHeader aria-label="sticky table">
             <TableHead>
               <TableRow>
                 <TableCell align="left">
@@ -232,9 +226,6 @@ function SwarmicTable() {
                   key={article.uuid}
                   tabIndex={index}
                   sx={{
-                    "&:focus": {
-                      backgroundColor: "orange",
-                    },
                     cursor: "pointer",
                     "&:last-child td, &:last-child th": { border: 0 },
                     ...(article.isViewed && {

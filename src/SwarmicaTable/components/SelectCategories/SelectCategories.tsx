@@ -1,4 +1,4 @@
-import React, { FC, ForwardRefRenderFunction, forwardRef } from "react";
+import React, { ForwardRefRenderFunction, forwardRef } from "react";
 import { ISelectCategoriesProps } from "./type";
 import {
   FormControl,
@@ -8,12 +8,18 @@ import {
   SelectProps,
 } from "@mui/material";
 
-const SelectedCategories: FC<ISelectCategoriesProps> = ({
-  categoriesList,
-  selectedCategories,
-  disabled,
-  handleChangeSelectedCategory,
-}) => {
+const SelectedCategories: ForwardRefRenderFunction<
+  SelectProps,
+  ISelectCategoriesProps
+> = (
+  {
+    categoriesList,
+    selectedCategories,
+    disabled,
+    handleChangeSelectedCategory,
+  },
+  ref,
+) => {
   return (
     <FormControl fullWidth sx={{ marginTop: "20px" }}>
       <InputLabel id="select-category-label-id">Categories</InputLabel>
@@ -25,6 +31,7 @@ const SelectedCategories: FC<ISelectCategoriesProps> = ({
         value={selectedCategories}
         label={"Categories"}
         onChange={handleChangeSelectedCategory}
+        inputRef={ref}
         inputProps={{
           width: 150,
         }}
@@ -51,4 +58,4 @@ const SelectedCategories: FC<ISelectCategoriesProps> = ({
   );
 };
 
-export default React.memo(SelectedCategories);
+export default React.memo(forwardRef(SelectedCategories));

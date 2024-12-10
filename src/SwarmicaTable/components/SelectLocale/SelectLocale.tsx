@@ -5,7 +5,7 @@ import {
   Select,
   SelectProps,
 } from "@mui/material";
-import React, { FC, ForwardRefRenderFunction, forwardRef } from "react";
+import React, { ForwardRefRenderFunction, forwardRef } from "react";
 import { ISelectLocaleProps } from "./type";
 
 const SelectLocale: ForwardRefRenderFunction<
