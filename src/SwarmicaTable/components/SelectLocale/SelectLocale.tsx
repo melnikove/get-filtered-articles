@@ -1,13 +1,17 @@
-import { FormControl, InputLabel, MenuItem, Select } from "@mui/material";
-import React, { FC } from "react";
+import {
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Select,
+  SelectProps,
+} from "@mui/material";
+import React, { FC, ForwardRefRenderFunction, forwardRef } from "react";
 import { ISelectLocaleProps } from "./type";
 
-const SelectLocale: FC<ISelectLocaleProps> = ({
-  locale,
-  localeList,
-  disabled,
-  handleChangeLocale,
-}) => {
+const SelectLocale: ForwardRefRenderFunction<
+  SelectProps,
+  ISelectLocaleProps
+> = ({ locale, localeList, disabled, handleChangeLocale }, ref) => {
   return (
     <FormControl fullWidth>
       <InputLabel id="select-locale-label-id">Locale</InputLabel>
@@ -21,6 +25,7 @@ const SelectLocale: FC<ISelectLocaleProps> = ({
         inputProps={{
           width: 150,
         }}
+        inputRef={ref}
         MenuProps={{
           PaperProps: {
             style: {
@@ -39,4 +44,4 @@ const SelectLocale: FC<ISelectLocaleProps> = ({
   );
 };
 
-export default React.memo(SelectLocale);
+export default React.memo(forwardRef(SelectLocale));

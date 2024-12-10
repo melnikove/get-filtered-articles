@@ -1,6 +1,7 @@
 import React, {
   ChangeEvent,
   useCallback,
+  useEffect,
   useMemo,
   useRef,
   useState,
@@ -50,6 +51,17 @@ function SwarmicTable() {
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [searchString, setSearchString] = useState<string | null>(null);
 
+  const searchRef = useRef(null);
+  const selectLocaleRef = useRef(null);
+
+  const currentFocusRef = useRef(null);
+
+  useEffect(() => {
+    if (isDictFetched && selectLocaleRef.current) {
+      (selectLocaleRef.current as HTMLInputElement).focus();
+    }
+  }, [isDictFetched, selectLocaleRef]);
+
   useRequestData({
     setIsError,
     setIsLoading,
@@ -75,18 +87,27 @@ function SwarmicTable() {
     [articlesList, setArticlesList],
   );
 
-  const handleChangeLocale = useCallback((event: SelectChangeEvent<string>) => {
-    setLocale(event.target.value);
-  }, []);
+  const handleChangeLocale = useCallback(
+    (event: SelectChangeEvent<string>) => {
+      setLocale(event.target.value);
+      currentFocusRef.current = selectLocaleRef.current;
+    },
+    [selectLocaleRef, currentFocusRef],
+  );
 
   const handleChangeSelectedCategory = useCallback(
     (event: SelectChangeEvent<string[]>) => {
       setSelectedCategories(event.target.value as string[]);
+      /* так как этот селект с множественным выборомм, 
+      то у него не при потере фокуса не закрывается список выбора. 
+      Но при исчезновении фокуса пропадает способность выбора элементов с клавиатуры.
+      Нужно просто обнулить фокус предыдущего элемента */
+      currentFocusRef.current = null;
     },
-    [],
+    [currentFocusRef],
   );
 
-  const searchRef = useRef(null);
+  console.log({ searchRef, selectLocaleRef });
 
   const handleResetClick = useCallback(() => {
     setLocale(undefined);
@@ -96,13 +117,20 @@ function SwarmicTable() {
       (searchRef.current as HTMLInputElement).value = "";
       setSearchString("");
     }
-  }, [searchRef]);
+  }, [searchRef, selectLocaleRef]);
+
+  useEffect(() => {
+    if (currentFocusRef.current) {
+      (currentFocusRef.current as HTMLInputElement).focus();
+    }
+  }, [isLoading, currentFocusRef]);
 
   const handleChangeSearchStr = useCallback(
     (event: ChangeEvent<HTMLInputElement>) => {
       setSearchString(event.target.value);
+      currentFocusRef.current = searchRef.current;
     },
-    [],
+    [currentFocusRef, searchRef],
   );
 
   const debouncedHandler = debounce(handleChangeSearchStr, 300);
@@ -145,6 +173,7 @@ function SwarmicTable() {
               locale,
               localeList,
               disabled: isLoading,
+              ref: selectLocaleRef,
               handleChangeLocale,
             }}
           />
@@ -180,8 +209,17 @@ function SwarmicTable() {
 
       {!isError && !isLoading && !articlesList.length && <h3>Нет данных</h3>}
       {!isError && !isLoading && !!articlesList.length && (
-        <TableContainer component={Paper} sx={{ marginTop: "20px" }}>
-          <Table sx={{ minWidth: 650 }} stickyHeader aria-label="sticky table">
+        <TableContainer
+          component={Paper}
+          sx={{ marginTop: "20px" }}
+          onBlur={() => console.log("table container blurred")}
+        >
+          <Table
+            sx={{ minWidth: 650 }}
+            stickyHeader
+            aria-label="sticky table"
+            onBlur={() => console.log("table blurred")}
+          >
             <TableHead>
               <TableRow>
                 <TableCell align="left">
@@ -192,11 +230,15 @@ function SwarmicTable() {
                 </TableCell>
               </TableRow>
             </TableHead>
-            <TableBody>
+            <TableBody onBlur={() => console.log("tb blurred")}>
               {articlesList.map((article: ArticleItem, index) => (
                 <TableRow
                   key={article.uuid}
+                  tabIndex={index}
                   sx={{
+                    "&:focus": {
+                      backgroundColor: "orange",
+                    },
                     cursor: "pointer",
                     "&:last-child td, &:last-child th": { border: 0 },
                     ...(article.isViewed && {
