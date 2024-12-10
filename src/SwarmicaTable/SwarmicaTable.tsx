@@ -107,8 +107,6 @@ function SwarmicTable() {
     [currentFocusRef],
   );
 
-  console.log({ searchRef, selectLocaleRef });
-
   const handleResetClick = useCallback(() => {
     setLocale(undefined);
     setSelectedCategories([]);
@@ -212,13 +210,11 @@ function SwarmicTable() {
         <TableContainer
           component={Paper}
           sx={{ marginTop: "20px" }}
-          onBlur={() => console.log("table container blurred")}
         >
           <Table
             sx={{ minWidth: 650 }}
             stickyHeader
             aria-label="sticky table"
-            onBlur={() => console.log("table blurred")}
           >
             <TableHead>
               <TableRow>
@@ -230,7 +226,7 @@ function SwarmicTable() {
                 </TableCell>
               </TableRow>
             </TableHead>
-            <TableBody onBlur={() => console.log("tb blurred")}>
+            <TableBody>
               {articlesList.map((article: ArticleItem, index) => (
                 <TableRow
                   key={article.uuid}
